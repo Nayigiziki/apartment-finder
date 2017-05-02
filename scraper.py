@@ -83,7 +83,14 @@ def scrape_area(area):
                 result.update(geo_data)
             else:
                 result["area"] = ""
-                result["bart"] = ""
+                result["google_stop"] = ""
+                result["google_dist"] = ""
+                result["fb_stop"] = ""
+                result["fb_dist"] = ""
+                result["fb_walktime"] = "Unknown"
+                result["google_walktime"] = "Unknown"
+                result["adi_drivetime"] = "Unknown"
+                result["address"] = "Unknown"
 
             # Try parsing the price.
             price = 0
@@ -144,8 +151,11 @@ def scrape_area(area):
                 'google_stop': result['google_stop'],
                 'google_dist': result['google_dist'],
                 'fb_stop': result['fb_stop'],
-                'fb_dist': result['fb_dist']
-
+                'fb_dist': result['fb_dist'],
+                'fb_walktime': result['fb_walktime'],
+                'google_walktime': result['google_walktime'],
+                'adi_drivetime': result['adi_drivetime'],
+                'address': result['address']
             }
 
             print "Adding %s..."%result['name']
