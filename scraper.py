@@ -163,6 +163,8 @@ def scrape_area(area):
             if should_include:
                 results.append(result_to_return)
 
+        else:
+            print "Skipping %s..."%result['name']
 
         counter = counter + 1
         # get new credentials
