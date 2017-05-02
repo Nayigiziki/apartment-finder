@@ -61,15 +61,24 @@ def find_points_of_interest(geotag, location):
             area = a
             area_found = True
 
-    # Check to see if the listing is near any transit stations.
-    for station, coords in settings.TRANSIT_STATIONS.items():
+    # Check which google shuttle stop is closest
+    google_shortest_distance = 99999999
+    for station, coords in settings.GOOGLE_STOPS.items():
         dist = coord_distance(coords[0], coords[1], geotag[0], geotag[1])
-        if (min_dist is None or dist < min_dist) and dist < settings.MAX_TRANSIT_DIST:
-            bart = station
-            near_bart = True
+        if (dist < google_shortest_distance):
+            google_stop = station
+            google_dist = dist
+            google_shortest_distance = dist
 
-        if (min_dist is None or dist < min_dist):
-            bart_dist = dist
+    # Check which google shuttle stop is closest
+    fb_shortest_distance = 99999999
+    for station, coords in settings.FB_STOPS.items():
+        dist = coord_distance(coords[0], coords[1], geotag[0], geotag[1])
+        if (dist < fb_shortest_distance):
+            fb_stop = station
+            fb_dist = dist
+            fb_shortest_distance = dist
+
 
     # If the listing isn't in any of the boxes we defined, check to see if the string description of the neighborhood
     # matches anything in our list of neighborhoods.
@@ -81,7 +90,9 @@ def find_points_of_interest(geotag, location):
     return {
         "area_found": area_found,
         "area": area,
-        "near_bart": near_bart,
-        "bart_dist": bart_dist,
-        "bart": bart
+        # "near_bart": near_bart,
+        "google_stop": google_stop,
+        "google_dist": google_dist,
+        "fb_stop": fb_stop,
+        "fb_dist": fb_dist
     }
