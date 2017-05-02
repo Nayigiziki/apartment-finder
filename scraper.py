@@ -8,6 +8,7 @@ from util import post_listing_to_slack, find_points_of_interest
 from slackclient import SlackClient
 import time
 import settings
+import google_sheets
 
 engine = create_engine('sqlite:///listings.db', echo=False)
 
@@ -32,6 +33,7 @@ class Listing(Base):
     cl_id = Column(Integer, unique=True)
     area = Column(String)
     bart_stop = Column(String)
+    should_include = Column(Boolean)
 
 Base.metadata.create_all(engine)
 
@@ -44,11 +46,14 @@ def scrape_area(area):
     :param area:
     :return: A list of results.
     """
+    #  get the google sheet object
+    sheet = google_sheets.open_sheet()
+
     cl_h = CraigslistHousing(site=settings.CRAIGSLIST_SITE, area=area, category=settings.CRAIGSLIST_HOUSING_SECTION,
-                             filters={'max_price': settings.MAX_PRICE, "min_price": settings.MIN_PRICE})
+                             filters=settings.FILTERS)
 
     results = []
-    gen = cl_h.get_results(sort_by='newest', geotagged=True, limit=20)
+    gen = cl_h.get_results(sort_by='newest', geotagged=True, limit=1000)
     while True:
         try:
             result = next(gen)
@@ -85,6 +90,12 @@ def scrape_area(area):
             except Exception:
                 pass
 
+
+            #include result if within our area
+            should_include = False
+            if len(result["area"]) > 0:
+                should_include = True
+
             # Create the listing object.
             listing = Listing(
                 link=result["url"],
@@ -96,16 +107,59 @@ def scrape_area(area):
                 location=result["where"],
                 cl_id=result["id"],
                 area=result["area"],
-                bart_stop=result["bart"]
+                # bart_stop=result["bart"],
+                # min_bedrooms=settings.MIN_BEDROOMS,
+                # min_bathrooms=settings.MIN_BATHROOMS,
+                should_include = should_include,
+                # bedrooms = result['bedrooms'],
+                # bathrooms = result['bathrooms'],
+                # sq_ft = result['sq_ft'],
+                # amenities = result['amenities'],
+                # available_date = result['available_date'],
+
             )
+
+            result_to_return = {
+                'link': result["url"],
+                'created':parse(result["datetime"]),
+                'lat':lat,
+                'lon':lon,
+                'name':result["name"],
+                'price':price,
+                'location':result["where"],
+                'cl_id':result["id"],
+                'tagged_location':result["area"],
+                # 'bart_stop':result["bart"],
+                # 'bart_dist':result["bart_dist"],
+                # 'min_bedrooms':settings.MIN_BEDROOMS,
+                # 'min_bathrooms':settings.MIN_BATHROOMS,
+                'should_include': should_include,
+                'available_date': result["available_date"],
+                'bedrooms': result["bedrooms"],
+                'bathrooms': result["bathrooms"],
+                'amenities': result["amenities"],
+                'sq_ft': result["sq_ft"],
+                'google_stop': result['google_stop'],
+                'google_dist': result['google_dist'],
+                'fb_stop': result['fb_stop'],
+                'fb_dist': result['fb_dist']
+
+            }
+
+            print "Adding %s..."%result['name']
+            google_sheets.add_new_record(sheet, result_to_return)
+
+            # print result_to_return
 
             # Save the listing so we don't grab it again.
             session.add(listing)
             session.commit()
 
             # Return the result if it's near a bart station, or if it is in an area we defined.
-            if len(result["bart"]) > 0 or len(result["area"]) > 0:
-                results.append(result)
+            # if len(result["bart"]) > 0 or len(result["area"]) > 0:
+            #     results.append(result)
+            if should_include:
+                results.append(result_to_return)
 
     return results
 
@@ -123,7 +177,3 @@ def do_scrape():
         all_results += scrape_area(area)
 
     print("{}: Got {} results".format(time.ctime(), len(all_results)))
-
-    # Post each result to slack.
-    for result in all_results:
-        post_listing_to_slack(sc, result)
