@@ -49,6 +49,8 @@ def scrape_area(area):
     #  get the google sheet object
     sheet = google_sheets.open_sheet()
 
+    counter = 0
+
     cl_h = CraigslistHousing(site=settings.CRAIGSLIST_SITE, area=area, category=settings.CRAIGSLIST_HOUSING_SECTION,
                              filters=settings.FILTERS)
 
@@ -160,6 +162,12 @@ def scrape_area(area):
             #     results.append(result)
             if should_include:
                 results.append(result_to_return)
+
+
+        counter = counter + 1
+        # get new credentials
+        if counter % 50 == 0:
+            sheet = google_sheets.open_sheet()
 
     return results
 
