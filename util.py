@@ -1,5 +1,6 @@
 import settings
 import math
+from google_maps import *
 
 def coord_distance(lat1, lon1, lat2, lon2):
     """
@@ -53,6 +54,10 @@ def find_points_of_interest(geotag, location):
     area = ""
     min_dist = None
     near_bart = False
+    fb_stop = None
+    google_stop = None
+    google_dist = None
+    fb_dist = None
     bart_dist = "N/A"
     bart = ""
     # Look to see if the listing is in any of the neighborhood boxes we defined.
@@ -70,6 +75,12 @@ def find_points_of_interest(geotag, location):
             google_dist = dist
             google_shortest_distance = dist
 
+    #get walking time to the shuttle using google maps api
+    try:
+        google_walktime = walkingTimeFromTo(geotag[0], geotag[1], settings.GOOGLE_STOPS[google_stop][0], settings.GOOGLE_STOPS[google_stop][1])
+    except:
+        google_walktime = 'Unknown'
+
     # Check which google shuttle stop is closest
     fb_shortest_distance = 99999999
     for station, coords in settings.FB_STOPS.items():
@@ -79,10 +90,28 @@ def find_points_of_interest(geotag, location):
             fb_dist = dist
             fb_shortest_distance = dist
 
+    #get walking time to the shuttle using google maps api
+    try:
+        fb_walktime = walkingTimeFromTo(geotag[0], geotag[1], settings.FB_STOPS[fb_stop][0], settings.GOOGLE_STOPS[google_stop][1])
+    except:
+        fb_walktime = 'Unknown'
+
+    #get distance to adi office
+    try:
+        adi_drivetime = drivingTimeToOffice(geotag[0], geotag[1], settings.OFFICE_ADDRESS)
+    except:
+        adi_drivetime = "Unknown"
+
+    #get the real address
+    try:
+        address = geoCodeAddress(geotag[0], geotag[1])
+    except:
+        address = "%f,%f"%(geotag[0], geotag[1])
+
 
     # If the listing isn't in any of the boxes we defined, check to see if the string description of the neighborhood
     # matches anything in our list of neighborhoods.
-    if len(area) == 0:
+    if len(area) == 0 and location is not None:
         for hood in settings.NEIGHBORHOODS:
             if hood in location.lower():
                 area = hood
@@ -93,6 +122,10 @@ def find_points_of_interest(geotag, location):
         # "near_bart": near_bart,
         "google_stop": google_stop,
         "google_dist": google_dist,
+        "google_walktime": google_walktime,
         "fb_stop": fb_stop,
-        "fb_dist": fb_dist
+        "fb_dist": fb_dist,
+        "fb_walktime": fb_walktime,
+        "adi_drivetime": adi_drivetime,
+        "address": address
     }
