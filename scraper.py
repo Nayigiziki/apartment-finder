@@ -67,9 +67,9 @@ def scrape_area(area):
 
         # Don't store the listing if it already exists.
         if listing is None:
-            if result["where"] is None:
-                # If there is no string identifying which neighborhood the result is from, skip it.
-                continue
+            # if result["where"] is None:
+            #     # If there is no string identifying which neighborhood the result is from, skip it.
+            #     continue
 
             lat = 0
             lon = 0
