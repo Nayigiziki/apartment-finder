@@ -93,9 +93,9 @@ def scrape_area(area):
                 pass
 
 
-            #include result if within our area
+            #include result if within our area or if there is no location infroamtion
             should_include = False
-            if len(result["area"]) > 0:
+            if len(result["area"]) > 0 or lat == 0:
                 should_include = True
 
             # Create the listing object.
