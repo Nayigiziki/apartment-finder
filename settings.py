@@ -1,13 +1,10 @@
 import os
 
-## Price
-
-# The minimum rent you want to pay per month.
-MIN_PRICE = 1500
-
-# The maximum rent you want to pay per month.
-MAX_PRICE = 2000
-
+# filters
+FILTERS = {
+    'min_bathrooms': 1,
+    'min_bedrooms': 3
+}
 ## Location preferences
 
 # The Craigslist site you want to search on.
@@ -84,12 +81,56 @@ MAX_TRANSIT_DIST = 2 # kilometers
 
 # Transit stations you want to check against.  Every coordinate here will be checked against each listing,
 # and the closest station name will be added to the result and posted into Slack.
-TRANSIT_STATIONS = {
-    "oakland_19th_bart": [37.8118051,-122.2720873],
-    "macarthur_bart": [37.8265657,-122.2686705],
-    "rockridge_bart": [37.841286,-122.2566329],
-    "downtown_berkeley_bart": [37.8629541,-122.276594],
-    "north_berkeley_bart": [37.8713411,-122.2849758]
+GOOGLE_STOPS = {
+    "Van Ness @ Union": [37.798656,-122.424156],
+    "Van Ness @ Sacramento": [37.791363,-122.422707],
+    "Columbus @ Powell": [37.800591,-122.410721],
+    "San Francisco Office": [37.791172,-122.389923],
+    "Soma": [37.777119,-122.395134],
+    "Civic Center": [37.778316,-122.414398],
+    "Stanyan @ Frederick": [37.766594,-122.45295],
+    "Haight @ Divisadero": [37.771225,-122.436745],
+    "Hayes @ Steiner": [37.775612,-122.432495],
+    "24th @ Castro": [37.75124,-122.433762],
+    "24th @ Church": [37.751598,-122.427704],
+    "30th @ Dolores": [37.742188,-122.424614],
+    "18th & Dolores": [37.76125,-122.42585],
+    "24th @ Valencia": [37.752033,-122.420387],
+    "Park Presido @ Geary": [37.780266,-122.47245],
+    "19th @ Kirkham": [37.759975,-122.476974],
+    "19th @ Taraval": [37.743191,-122.475822],
+    "Glen Park BART": [37.733131,-122.434143],
+    "San Francisco Office Pickup": [37.789299,-122.388672],
+    "Valencia @ 24th": [37.751945,-122.420769],
+    "14th and Market (Late AM Quad, Sweep, & Evening Drop Off)": [37.768764,-122.427574],
+    "18th & Castro": [37.760788,-122.434914],
+    "201 Toland Street": [37.745743,-122.397133],
+    "18th & Dolores": [37.761444,-122.426628],
+    "Jackson Playground": [37.765011,-122.399948],
+    "Potrero & 18th": [37.761635,-122.407318],
+    "Potrero & 23rd": [37.753986,-122.406586],
+    "Lombard @ Pierce": [37.799282,-122.439499],
+    "Market @ Dolores": [37.768872,-122.427169]
+}
+
+FB_STOPS = {
+    "SOMA-1": [37.785083,-122.419667],
+    "SOMA-2": [37.778306,-122.414389],
+    "SOMA-3": [37.778056,-122.397056],
+    "SOMA-4": [37.774417,-122.404444],
+    "Mission-1": [37.76427,-122.430571],
+    "Mission-2": [37.748643,-122.420834],
+    "Mission-3": [37.748095,-122.418281],
+    "Mission-4": [37.751702,-122.427492],
+    "Mission-5": [37.765028,-122.419278],
+    "Hayes Valley-1": [37.773118,-122.44628],
+    "Hayes Valley-2": [37.777639,-122.42325],
+    "Hayes Valley-3": [37.773778,-122.432083],
+    "Hayes Valley-4": [37.780352,-122.438784],
+    "Hayes Valley-5": [37.784972,-122.424667],
+    "Portero-1": [37.765028,-122.399861],
+    "Portero-2": [37.761889,-122.41025],
+    "Portero-3": [37.755722,-122.409528]
 }
 
 ## Search type preferences
