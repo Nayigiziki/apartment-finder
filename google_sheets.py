@@ -34,15 +34,15 @@ def add_new_record(sheet, record_to_add):
             record_to_add['sq_ft'],
             record_to_add['amenities'],
             record_to_add['available_date'],
-            record_to_add['google_stop'],
-            record_to_add['google_dist'],
-            record_to_add['fb_stop'],
-            record_to_add['fb_dist'],
+            # record_to_add['google_stop'],
+            # record_to_add['google_dist'],
+            # record_to_add['fb_stop'],
+            # record_to_add['fb_dist'],
             record_to_add['should_include'],
             record_to_add['address'],
             record_to_add['adi_drivetime'],
-            record_to_add['google_walktime'],
-            record_to_add['fb_walktime']
+            # record_to_add['google_walktime'],
+            # record_to_add['fb_walktime']
             ]
     try:
         sheet.insert_row(row, new_row)
