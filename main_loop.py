@@ -4,6 +4,9 @@ import time
 import sys
 import traceback
 
+import requests.packages.urllib3
+
+requests.packages.urllib3.disable_warnings()
 if __name__ == "__main__":
     while True:
         print("{}: Starting scrape cycle".format(time.ctime()))
