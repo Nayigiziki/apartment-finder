@@ -21,7 +21,7 @@ pyasn1==0.2.3
 pyasn1-modules==0.0.8
 Pygments==2.2.0
 pyparsing==2.2.0
--e git+https://github.com/epec254/python-craigslist.git@ca473a156ac0aded1b186860483d844a377df766#egg=python_craigslist
+-e git+https://github.com/Nayigiziki/python-craigslist.git@ad30b3640fad5e8d1442f6adc2bb6b4fd372cd6a#egg=python_craigslist
 python-dateutil==2.6.0
 requests==2.13.0
 rsa==3.4.2

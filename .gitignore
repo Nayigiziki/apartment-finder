@@ -95,3 +95,12 @@ listings.db
 
 client_secret.json
 client_secret*
+
+bin/
+fix-craigs/
+get-pip.py
+python-craigslist/
+pyvenv.cfg
+src/
+test.py
+config.py

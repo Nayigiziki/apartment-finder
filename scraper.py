@@ -39,6 +39,8 @@ Base.metadata.create_all(engine)
 
 Session = sessionmaker(bind=engine)
 session = Session()
+num_rows_deleted = session.query(Listing).delete()
+session.commit()
 
 def scrape_area(area):
     """
@@ -54,18 +56,22 @@ def scrape_area(area):
     cl_h = CraigslistHousing(site=settings.CRAIGSLIST_SITE, area=area, category=settings.CRAIGSLIST_HOUSING_SECTION,
                              filters=settings.FILTERS)
 
+
     results = []
     gen = cl_h.get_results(sort_by='newest', geotagged=True, limit=1000)
+
     while True:
         try:
             result = next(gen)
         except StopIteration:
             break
         except Exception:
+            print('exception')
             continue
-        listing = session.query(Listing).filter_by(cl_id=result["id"]).first()
 
+        listing = session.query(Listing).filter_by(cl_id=result["id"]).first()
         # Don't store the listing if it already exists.
+
         if listing is None:
             # if result["where"] is None:
             #     # If there is no string identifying which neighborhood the result is from, skip it.
@@ -143,11 +149,12 @@ def scrape_area(area):
                 # 'min_bedrooms':settings.MIN_BEDROOMS,
                 # 'min_bathrooms':settings.MIN_BATHROOMS,
                 'should_include': should_include,
-                'available_date': result["available_date"],
-                'bedrooms': result["bedrooms"],
-                'bathrooms': result["bathrooms"],
-                'amenities': result["amenities"],
-                'sq_ft': result["sq_ft"],
+                'available_date': "-",
+                'bedrooms': 0,
+                'bedrooms': 0,
+                'bathrooms': 0,
+                'amenities': "-",
+                'sq_ft': 0,
                 'google_stop': result['google_stop'],
                 'google_dist': result['google_dist'],
                 'fb_stop': result['fb_stop'],
@@ -158,7 +165,7 @@ def scrape_area(area):
                 'address': result['address']
             }
 
-            print "Adding %s..."%result['name']
+            print("Adding %s..."%result['name'])
             google_sheets.add_new_record(sheet, result_to_return)
 
             # print result_to_return
@@ -174,12 +181,12 @@ def scrape_area(area):
                 results.append(result_to_return)
 
         else:
-            print "Skipping %s..."%result['name']
+            print("Skipping %s..."%result['name'])
 
-        counter = counter + 1
-        # get new credentials
-        if counter % 50 == 0:
-            sheet = google_sheets.open_sheet()
+        # counter = counter + 1
+        # # get new credentials
+        # if counter % 50 == 0:
+        #     sheet = google_sheets.open_sheet()
 
     return results
 
@@ -189,7 +196,7 @@ def do_scrape():
     """
 
     # Create a slack client.
-    sc = SlackClient(settings.SLACK_TOKEN)
+    # sc = SlackClient(settings.SLACK_TOKEN)
 
     # Get all the results from craigslist.
     all_results = []

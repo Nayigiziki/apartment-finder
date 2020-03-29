@@ -26,6 +26,7 @@ def in_box(coords, box):
     :param box: Two tuples, where first is the bottom left, and the second is the top right of the box.
     :return: Boolean indicating if the coordinates are in the box.
     """
+
     if box[0][0] < coords[0] < box[1][0] and box[1][1] < coords[1] < box[0][1]:
         return True
     return False
@@ -78,7 +79,9 @@ def find_points_of_interest(geotag, location):
     #get walking time to the shuttle using google maps api
     try:
         google_walktime = walkingTimeFromTo(geotag[0], geotag[1], settings.GOOGLE_STOPS[google_stop][0], settings.GOOGLE_STOPS[google_stop][1])
-    except:
+    except Exception as e:
+        print('google walktime error')
+        print(e)
         google_walktime = 'Unknown'
 
     # Check which google shuttle stop is closest
@@ -93,19 +96,25 @@ def find_points_of_interest(geotag, location):
     #get walking time to the shuttle using google maps api
     try:
         fb_walktime = walkingTimeFromTo(geotag[0], geotag[1], settings.FB_STOPS[fb_stop][0], settings.GOOGLE_STOPS[google_stop][1])
-    except:
+    except Exception as e:
+        print('fb walktime error')
+        print(e)
         fb_walktime = 'Unknown'
 
     #get distance to adi office
     try:
         adi_drivetime = drivingTimeToOffice(geotag[0], geotag[1], settings.OFFICE_ADDRESS)
-    except:
+    except Exception as e:
+        print('adi walktime error')
+        print(e)
         adi_drivetime = "Unknown"
 
     #get the real address
     try:
         address = geoCodeAddress(geotag[0], geotag[1])
-    except:
+    except Exception as e:
+        print('address error')
+        print(e)
         address = "%f,%f"%(geotag[0], geotag[1])
 
 

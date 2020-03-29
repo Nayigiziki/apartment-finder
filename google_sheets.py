@@ -2,6 +2,9 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import google_maps
 import time
+import settings
+import config
+
 
 try:
     from private import *
@@ -12,10 +15,11 @@ GOOGLE_API_KEY_FILE = 'client_secret.json'
 
 def open_sheet():
     # use creds to create a client to interact with the Google Drive API
-    scope = ['https://spreadsheets.google.com/feeds']
+    scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
     credentials = ServiceAccountCredentials.from_json_keyfile_name(GOOGLE_API_KEY_FILE, scope)
     gc = gspread.authorize(credentials)
-    return gc.open_by_key(GOOGLE_SHEET_ID).worksheet('Scraped_Data')
+
+    return gc.open_by_key(config.GOOGLE_SHEET_ID).get_worksheet(0)
 
 def add_new_record(sheet, record_to_add):
     num_rows = sheet.row_count
@@ -34,20 +38,22 @@ def add_new_record(sheet, record_to_add):
             record_to_add['sq_ft'],
             record_to_add['amenities'],
             record_to_add['available_date'],
-            # record_to_add['google_stop'],
-            # record_to_add['google_dist'],
-            # record_to_add['fb_stop'],
-            # record_to_add['fb_dist'],
+            record_to_add['google_stop'],
+            record_to_add['google_dist'],
+            record_to_add['google_walktime'],
+            record_to_add['fb_stop'],
+            record_to_add['fb_dist'],
+            record_to_add['fb_walktime'],
             record_to_add['should_include'],
             record_to_add['address'],
             record_to_add['adi_drivetime'],
-            # record_to_add['google_walktime'],
-            # record_to_add['fb_walktime']
+            
             ]
     try:
         sheet.insert_row(row, new_row)
     except Exception as e:
-        print e
+        print('error')
+        print(e)
         # try again just in case - sometimes Google tells you to wait 30 seconds and retry
         time.sleep(30)
         sheet.insert_row(row, new_row)
